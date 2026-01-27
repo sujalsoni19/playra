@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Header() {
   const navigate = useNavigate();
   return (
-    <div className="my-4 p-3  shadow-[4px_2px_5px_0px_#4fd1c5] border border-[#a7a7a7] mx-auto w-[90vw] rounded-4xl">
+    <div className="my-2 p-1  shadow-[4px_2px_5px_0px_#4fd1c5] border border-[#a7a7a7] mx-auto w-[90vw] rounded-4xl">
       <nav className="flex items-center sm:gap-40 justify-between sm:justify-around">
         <div className="text-3xl">
             <Link to="/"><img src={logo} alt="Logo" className="w-30 sm:w-50" /></Link>

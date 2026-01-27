@@ -55,7 +55,7 @@ function Hero() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="flex flex-col sm:flex-row gap-8 sm:gap-20 px-4 sm:px-12 sm:mt-2"
+        className="flex flex-col sm:flex-row gap-8 sm:14 lg:gap-20 px-4 sm:px-12 sm:mt-2"
       >
         {featuresData.map((item) => (
           <FeatureCard
