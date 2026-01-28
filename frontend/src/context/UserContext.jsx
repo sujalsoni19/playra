@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../api/axios.js";
+import { getCurrentUser } from "../api/user.api.js";
 
 const userContext = createContext(null);
 
@@ -10,8 +10,8 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("api/v1/users/current-user");
-        console.log(res);
+        const res = await getCurrentUser();
+        console.log(res, res.data.user);
         setUser(res.data.user);
       } catch {
         setUser(null);
