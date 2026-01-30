@@ -12,7 +12,7 @@ function App() {
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-center justify-center">
           <Outlet />
         </div>
         <Footer />

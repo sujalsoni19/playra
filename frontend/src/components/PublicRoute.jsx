@@ -1,10 +1,9 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useUsercontext } from "../context/UserContext.jsx";
 import Loader from "./Loader.jsx";
 
-function ProtectedRoute({ children }) {
+function PublicRoute({ children }) {
   const { user, loading } = useUsercontext();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -14,11 +13,11 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (user) {
+    return <Navigate to="/home" replace />;
   }
 
   return children;
 }
 
-export default ProtectedRoute;
+export default PublicRoute;

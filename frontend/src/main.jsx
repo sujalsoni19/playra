@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
 import Hero from "./components/Hero.jsx";
 import App from "./App.jsx";
+import PublicRoute from "./components/PublicRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,15 +15,27 @@ const router = createBrowserRouter([
     path: "/",
     children: [
       {
-        element: <Hero />,
+        element: (
+          <PublicRoute>
+            <Hero />
+          </PublicRoute>
+        ),
         path: "/",
       },
       {
-        element: <Register />,
+        element: (
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        ),
         path: "/register",
       },
       {
-        element: <Login />,
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
         path: "/login",
       },
       {
@@ -31,7 +44,7 @@ const router = createBrowserRouter([
             <Home />
           </ProtectedRoute>
         ),
-        path: "/home"
+        path: "/home",
       },
     ],
   },
