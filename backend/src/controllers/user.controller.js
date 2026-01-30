@@ -14,6 +14,13 @@ export const normalizeImage = (file) => ({
   publicId: file?.public_id,
 });
 
+const isProd = process.env.NODE_ENV === "production";
+
+const options = {
+  httpOnly: true,
+  secure: isProd,
+};
+
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -140,11 +147,6 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -177,11 +179,6 @@ const logoutUser = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
 
   return res
     .status(200)
@@ -218,11 +215,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
-
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
 
     return res
       .status(200)
