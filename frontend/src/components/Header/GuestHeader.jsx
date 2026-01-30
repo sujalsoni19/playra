@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.svg";
+import logo from "../../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 
-function Header() {
+function GuestHeader() {
   const navigate = useNavigate();
   return (
     <div className="my-2 p-1  shadow-[4px_2px_5px_0px_#4fd1c5] border border-[#a7a7a7] mx-auto w-[90vw] rounded-4xl">
@@ -31,4 +31,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default GuestHeader;

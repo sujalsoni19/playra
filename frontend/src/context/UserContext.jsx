@@ -11,8 +11,7 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       try {
         const res = await getCurrentUser();
-        console.log(res, res.data.user);
-        setUser(res.data.user);
+        setUser(res.data.data);
       } catch {
         setUser(null);
       } finally {
