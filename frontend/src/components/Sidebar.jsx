@@ -1,8 +1,11 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, LogOut } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import GithubLogo from "../assets/Github.svg";
 import LinkedinLogo from "../assets/Linkedin.svg";
 import { primaryLinks, secondaryLinks } from "../data/sidebarLinks.js";
+import { useUsercontext } from "../context/UserContext.jsx";
+import { logoutUser } from "../api/user.api.js";
+import { useNavigate } from "react-router-dom";
 
 const navLinkClass = ({ isActive }) =>
   ` flex items-center gap-4 rounded-full py-2 px-3
@@ -10,8 +13,21 @@ const navLinkClass = ({ isActive }) =>
   ${isActive && "underline text-cyan-400"} `;
 
 function Sidebar() {
+  const { setUser } = useUsercontext();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+      navigate("/login");
+    } catch (error) {
+      console.log("error is:", error);
+    }
+  };
+
   return (
-    <div className="border p-2 rounded-xl h-full border-cyan-400 hidden lg:flex lg:flex-col lg:w-1/6">
+    <>
       <div className="p-2 flex flex-col gap-3">
         {primaryLinks.map((item) => {
           const Icon = item.icon;
@@ -25,7 +41,7 @@ function Sidebar() {
         })}
       </div>
       <div className="w-full border"></div>
-      <div className="p-2 flex flex-1 bg-amber-300 flex-col gap-2">
+      <div className="p-2 flex flex-1 flex-col gap-2">
         <NavLink
           to={"/subscriptions"}
           className={({ isActive }) =>
@@ -53,6 +69,19 @@ function Sidebar() {
           );
         })}
       </div>
+      <div
+        onClick={logout}
+        className="p-2 flex flex-col gap-3 lg:hidden hover:cursor-pointer"
+      >
+        <div
+          className="flex text-center items-center gap-4 rounded-full py-2 px-3
+  bg-gray-800 hover:bg-gray-700 transition-colors "
+        >
+          <LogOut />
+          Logout
+        </div>
+      </div>
+
       <div className="w-full border"></div>
       <div className="p-2 flex gap-5 items-center">
         Follow us on:
@@ -73,7 +102,7 @@ function Sidebar() {
           </a>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

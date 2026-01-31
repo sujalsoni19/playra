@@ -3,31 +3,43 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 import { useUsercontext } from "../../context/UserContext.jsx";
-import { Plus, Search, Menu, ArrowLeft } from "lucide-react";
+import { Plus, Search, Menu, ArrowLeft, X } from "lucide-react";
 import { logoutUser } from "../../api/user.api.js";
+import Sidebar from "../Sidebar.jsx";
 
 function UserHeader() {
   const { user, setUser } = useUsercontext();
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 640px)");
+    const searchQuery = window.matchMedia("(min-width: 640px)");
+    const sidebarQuery = window.matchMedia("(min-width: 1024px)");
 
-    const handleChange = (e) => {
+    const handleSearchChange = (e) => {
       if (e.matches) {
         setShowSearch(false);
       }
     };
 
-    if (mediaQuery.matches) {
-      setShowSearch(false);
-    }
+    const handleSidebarChange = (e) => {
+      if (e.matches) {
+        setShowSidebar(false);
+      }
+    };
 
-    mediaQuery.addEventListener("change", handleChange);
+    // Initial sync
+    if (searchQuery.matches) setShowSearch(false);
+    if (sidebarQuery.matches) setShowSidebar(false);
+
+    // Listeners
+    searchQuery.addEventListener("change", handleSearchChange);
+    sidebarQuery.addEventListener("change", handleSidebarChange);
 
     return () => {
-      mediaQuery.removeEventListener("change", handleChange);
+      searchQuery.removeEventListener("change", handleSearchChange);
+      sidebarQuery.removeEventListener("change", handleSidebarChange);
     };
   }, []);
 
@@ -42,7 +54,7 @@ function UserHeader() {
   };
 
   return (
-    <div className="my-2 p-1 shadow-[4px_2px_5px_0px_#4fd1c5] border border-[#a7a7a7] mx-auto w-[90vw] rounded-4xl">
+    <div className="my-2 relative p-1 shadow-[4px_2px_5px_0px_#4fd1c5] border border-[#a7a7a7] mx-auto w-[90vw] rounded-4xl">
       {showSearch ? (
         <div className="flex items-center justify-around">
           <button
@@ -66,12 +78,15 @@ function UserHeader() {
         </div>
       ) : (
         <nav className="flex items-center gap-2 md:gap-5 lg:gap-15 xl:gap-30 justify-between px-4">
-          <span className="sm:hidden">
+          <span
+            onClick={() => setShowSidebar(true)}
+            className="lg:hidden hover:cursor-pointer"
+          >
             <Menu />
           </span>
           <div className="text-3xl">
             <Link to={user ? "/home" : "/"}>
-              <img src={logo} alt="Logo" className="w-30 sm:w-40" />
+              <img src={logo} alt="Logo" className="w-30 lg:w-40" />
             </Link>
           </div>
           <div className="sm:flex-1 flex items-center">
@@ -106,12 +121,23 @@ function UserHeader() {
             </button>
             <button
               onClick={logout}
-              className="hover:cursor-pointer font-bold hidden sm:block text-sm sm:text-xl"
+              className="hover:cursor-pointer font-bold hidden lg:block text-sm sm:text-xl"
             >
               Logout
             </button>
           </div>
         </nav>
+      )}
+      {showSidebar && (
+        <div className="absolute bg-gray-900 border border-cyan-400 rounded-xl h-[85vh] top-12 -left-4 sm:-left-6 z-50">
+          <div
+            onClick={() => setShowSidebar(false)}
+            className="flex hover:cursor-pointer p-2 justify-end"
+          >
+            <X />
+          </div>
+          <Sidebar />
+        </div>
       )}
     </div>
   );
