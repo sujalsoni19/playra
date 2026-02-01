@@ -6,8 +6,9 @@ import { primaryLinks, secondaryLinks } from "../data/sidebarLinks.js";
 import { useUsercontext } from "../context/UserContext.jsx";
 import { logoutUser } from "../api/user.api.js";
 import { useNavigate } from "react-router-dom";
+import SubscribedchannelsList from "./SubscribedchannelsList.jsx";
 
-const navLinkClass = ({ isActive }) =>
+export const navLinkClass = ({ isActive }) =>
   ` flex items-center gap-4 rounded-full py-2 px-3
   bg-gray-800 hover:bg-gray-700 transition-colors
   ${isActive && "underline text-cyan-400"} `;
@@ -52,8 +53,7 @@ function Sidebar() {
           <ChevronRight />
         </NavLink>
         <div>
-          {/* List of subscriptions can go here */}
-          <p className="text-sm text-gray-400">No subscriptions yet.</p>
+          < SubscribedchannelsList />
         </div>
       </div>
       <div className="w-full border"></div>

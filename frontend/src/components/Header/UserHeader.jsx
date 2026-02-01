@@ -129,7 +129,7 @@ function UserHeader() {
         </nav>
       )}
       {showSidebar && (
-        <div className="absolute bg-gray-900 border border-cyan-400 rounded-xl h-[85vh] top-12 -left-4 sm:-left-6 z-50">
+        <div className="absolute bg-gray-900 border custom-scrollbar overflow-y-auto border-cyan-400 rounded-xl h-[85vh] top-12 -left-4 sm:-left-6 z-50">
           <div
             onClick={() => setShowSidebar(false)}
             className="flex hover:cursor-pointer p-2 justify-end"
