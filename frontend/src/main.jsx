@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { Login, Register, Home } from "./pages/index.js";
+import { Login, Register, Home, PostVideo } from "./pages/index.js";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
 import Hero from "./components/Hero.jsx";
@@ -46,6 +46,14 @@ const router = createBrowserRouter([
         ),
         path: "/home",
       },
+      {
+        element: (
+          <ProtectedRoute>
+            <PostVideo />
+          </ProtectedRoute>
+        ),
+        path: "/post-video",
+      }
     ],
   },
 ]);

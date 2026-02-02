@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useUsercontext } from "../../context/UserContext.jsx";
 import { Plus, Search, Menu, ArrowLeft, X } from "lucide-react";
 import { logoutUser } from "../../api/user.api.js";
@@ -10,6 +10,9 @@ import Sidebar from "../Sidebar.jsx";
 function UserHeader() {
   const { user, setUser } = useUsercontext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/home";
+
   const [showSearch, setShowSearch] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -89,31 +92,35 @@ function UserHeader() {
               <img src={logo} alt="Logo" className="w-30 lg:w-40" />
             </Link>
           </div>
-          <div className="sm:flex-1 flex items-center">
-            <input
-              type="text"
-              placeholder="search..."
-              className="bg-gray-900 outline-0 hidden sm:block text-cyan-400 rounded-r-none focus:inset-ring focus:inset-ring-cyan-400  w-full rounded-full py-2 px-5 "
-            />
-            {/* // for mobile */}
-            <span
-              onClick={() => setShowSearch(true)}
-              className="px-2 sm:hidden bg-gray-700 py-2 hover:cursor-pointer h-full rounded-full sm:rounded-r-full flex justify-center items-center"
-            >
-              <span className="flex text-cyan-400 items-center">
-                <Search />
-              </span>
-            </span>
-            {/* // for bigger screens */}
-            <span className="px-2 hidden sm:flex w-[15%] bg-gray-700 py-2 hover:cursor-pointer h-full rounded-r-full  justify-center items-center">
-              <span className="flex text-cyan-400 items-center">
-                <Search />
-              </span>
-            </span>
-          </div>
+          {isHome && (
+            <>
+              <div className="sm:flex-1 flex items-center">
+                <input
+                  type="text"
+                  placeholder="search..."
+                  className="bg-gray-900 outline-0 hidden sm:block text-cyan-400 rounded-r-none focus:inset-ring focus:inset-ring-cyan-400  w-full rounded-full py-2 px-5 "
+                />
+                {/* // for mobile */}
+                <span
+                  onClick={() => setShowSearch(true)}
+                  className="px-2 sm:hidden bg-gray-700 py-2 hover:cursor-pointer h-full rounded-full sm:rounded-r-full flex justify-center items-center"
+                >
+                  <span className="flex text-cyan-400 items-center">
+                    <Search />
+                  </span>
+                </span>
+                {/* // for bigger screens */}
+                <span className="px-2 hidden sm:flex w-[15%] bg-gray-700 py-2 hover:cursor-pointer h-full rounded-r-full  justify-center items-center">
+                  <span className="flex text-cyan-400 items-center">
+                    <Search />
+                  </span>
+                </span>
+              </div>
+            </>
+          )}
           <div className="flex gap-2 sm:gap-6">
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/post-video")}
               className="p-2 sm:px-6 flex gap-1 items-center sm:py-2 rounded-full bg-cyan-500 text-white font-bold hover:bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.5)] hover:shadow-[0_0_30px_rgba(6,182,212,0.8)] transition-all duration-300 ring-1 ring-white/20 text-sm sm:text-xl hover:cursor-pointer"
             >
               <Plus />
