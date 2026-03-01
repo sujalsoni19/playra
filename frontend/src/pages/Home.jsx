@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "../components/Sidebar.jsx";
+import Feed from "../components/Feed.jsx";
 
 function Home() {
   return (
@@ -8,8 +9,8 @@ function Home() {
         <Sidebar />
       </div>
 
-      <div className="bg-red-500 border p-2 rounded-xl border-cyan-400 w-full lg:w-5/6">
-        hii
+      <div className="border p-2 rounded-xl border-cyan-400 w-full lg:w-5/6">
+        <Feed />
       </div>
     </div>
   );
