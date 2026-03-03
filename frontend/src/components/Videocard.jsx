@@ -19,58 +19,58 @@ function formatDate(dateString) {
   });
 }
 
-function Videocard({video}) {
+function Videocard({ video }) {
   return (
     <div>
-        <Link to={`/video/${video._id}`}>
-            <motion.div
-        initial={{
-          borderWidth: "1px",
-          borderStyle: "solid",
-          borderColor: "transparent",
-        }}
-        whileHover={{
-          cursor: "pointer",
-          backgroundColor: "rgb(79 79 79 / 60%)",
-        }}
-        transition={{ duration: 0.3 }}
-        onClick={{}}
-        className="w-80 md:w-85 lg:w-90 flex flex-col items-center gap-1 rounded-2xl p-2"
-      >
-        <div className="relative">
-          <img
-            src={video.thumbnail?.url}
-            alt="thumbnail"
-            className="w-82.5 aspect-video rounded-2xl object-cover"
-          />
-          <p className="bg-gray-950 p-1 text-xs absolute right-4 bottom-3">
-            {formatDuration(video.duration)}
-          </p>
-        </div>
-        <div className="flex w-full p-2 gap-2 ">
-          <div className="w-10 h-10 shrink-0">
+      <Link to={`/video/${video._id}`}>
+        <motion.div
+          initial={{
+            borderWidth: "1px",
+            borderStyle: "solid",
+            borderColor: "transparent",
+          }}
+          whileHover={{
+            cursor: "pointer",
+            backgroundColor: "rgb(79 79 79 / 60%)",
+          }}
+          transition={{ duration: 0.3 }}
+          onClick={{}}
+          className="w-80 md:w-85 lg:w-90 flex flex-col items-center gap-1 rounded-2xl p-2"
+        >
+          <div className="relative">
             <img
-              src={video.owner?.avatar?.url}
-              alt="avatar"
-              className="object-cover object-center w-full h-full rounded-full"
+              src={video.thumbnail?.url}
+              alt="thumbnail"
+              className="w-82.5 aspect-video rounded-2xl object-cover"
             />
+            <p className="bg-gray-950 p-1 text-xs absolute right-4 bottom-3">
+              {formatDuration(video.duration)}
+            </p>
           </div>
-          <div>
-            <h1 className="font-bold text-base line-clamp-2 ">
-              {video.title}
-            </h1>
-            <p className="text-sm line-clamp-1">{video.owner.username}</p>
-            <div className="flex items-center text-gray-300">
-              <p className="text-xs">{video.views} views</p>
-              <p>
-                <Dot />
-              </p>
-              <p className="text-xs">{formatDate(video.createdAt)}</p>
+          <div className="flex w-full p-2 gap-2 ">
+            <div className="w-10 h-10 shrink-0">
+              <img
+                src={video.owner?.avatar?.url}
+                alt="avatar"
+                className="object-cover object-center w-full h-full rounded-full"
+              />
+            </div>
+            <div>
+              <h1 className="font-bold text-base line-clamp-2 ">
+                {video.title}
+              </h1>
+              <p className="text-sm line-clamp-1">{video.owner.username}</p>
+              <div className="flex items-center text-gray-300">
+                <p className="text-xs">{video.views} views</p>
+                <p>
+                  <Dot />
+                </p>
+                <p className="text-xs">{formatDate(video.createdAt)}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </motion.div>
-        </Link>
+        </motion.div>
+      </Link>
     </div>
   );
 }
