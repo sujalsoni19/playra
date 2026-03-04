@@ -11,3 +11,6 @@ export const logoutUser = () =>
 
 export const getCurrentUser = () =>
   api.get("/api/v1/users/current-user");
+
+export const getUserChannelProfile = (username) =>
+  api.get(`/api/v1/users/c/${username}`);

@@ -1,25 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { getVideo } from "../api/video.api.js";
+import { getUserChannelProfile } from "../api/user.api.js";
+import { toggleSubscription } from "../api/subscriber.api.js";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { motion } from "motion/react";
+import Loader from "../components/Loader.jsx";
 
 function Video() {
   const { id } = useParams();
-  const [video, setVideo] = useState([]);
+  const [username, setUsername] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [channelinfo, setChannelinfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVideo = async (id) => {
+    const fetchVideo = async () => {
       try {
+        setLoading(true);
+
         const res = await getVideo(id);
-        console.log(res?.data?.data);
-        setVideo(res?.data?.data);
+        const videoData = res?.data?.data;
+
+        setVideo(videoData);
+        setUsername(videoData?.owner?.username);
       } catch (error) {
-        console.log("Error while fetching video: ", error);
+        console.log("Error while fetching video:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchVideo(id);
-  }, []);
+
+    fetchVideo();
+  }, [id]);
+
+  const fetchUserChannelProfile = async () => {
+    try {
+      const res = await getUserChannelProfile(username);
+      setChannelinfo(res?.data?.data);
+      console.log(res?.data?.data);
+    } catch (error) {
+      console.log("error in fetching user channel profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!username) return;
+
+    fetchUserChannelProfile();
+  }, [username]);
+
+  const toggleSubscribe = async () => {
+    try {
+      const res = await toggleSubscription(channelinfo?._id);
+      console.log(res);
+      fetchUserChannelProfile();
+    } catch (error) {
+      console.log("error in toggling subscription: ", error);
+    }
+  };
+
+  if (!video || loading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="flex self-stretch w-full flex-1">
       <div className="grid w-full grid-cols-6 gap-4 p-2">
@@ -42,13 +90,27 @@ function Video() {
               <div className="bg-blue-500 gap-5 items-center flex flex-1">
                 <div className="flex flex-col">
                   <h1 className="text-xl">{video.owner?.username}</h1>
-                  <p className="text-gray-300 text-sm">238 subscribers</p>
+                  <p className="text-gray-300 text-sm">
+                    {channelinfo?.subscribersCount}{" "}
+                    <span className="ml-2">subscribers</span>
+                  </p>
                 </div>
-                <div>
-                  <button className="px-4 py-2 bg-white rounded-full text-black font-semibold">
-                    Subscribe
-                  </button>
-                </div>
+                <motion.button
+                  key={channelinfo?.isSubscribed}
+                  onClick={toggleSubscribe}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.25 }}
+                  className={`px-5 py-2 rounded-full font-semibold ${
+                    channelinfo?.isSubscribed
+                      ? "bg-cyan-400 text-white"
+                      : "bg-white text-black"
+                  }`}
+                >
+                  {channelinfo?.isSubscribed ? "Subscribed" : "Subscribe"}
+                </motion.button>
               </div>
               <div className="flex gap-2">
                 <button className="px-4 flex gap-2 py-2 bg-white rounded-full text-black font-semibold">
