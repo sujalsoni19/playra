@@ -114,11 +114,66 @@ const getVideoById = asyncHandler(async (req, res) => {
     throw new Apierror(400, "Invalid video id");
   }
 
-  const video = await Video.findOneAndUpdate(
-    { _id: id },
-    { $inc: { views: 1 } },
-    { new: true }
-  ).populate("owner", "username fullName avatar");
+  await Video.findByIdAndUpdate(id, { $inc: { views: 1 } });
+
+  const video = await Video.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$owner",
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "video",
+        as: "likedby",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: {
+          $size: "$likedby",
+        },
+        isLiked: {
+          $in: [new mongoose.Types.ObjectId(req.user?._id), "$likedby.likedBy"],
+        },
+      },
+    },
+    {
+      $project: {
+        likedby: 0, // remove the array
+      },
+    },
+  ]);
+
+  // older version without aggregation and likes count and isLiked field
+
+  // const video = await Video.findOneAndUpdate(
+  //   { _id: id },
+  //   { $inc: { views: 1 } },
+  //   { new: true }
+  // ).populate("owner", "username fullName avatar");
 
   if (!video) {
     throw new Apierror(404, "Video not found");
@@ -126,7 +181,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new Apiresponse(200, video, "Video fetched successfully"));
+    .json(new Apiresponse(200, video[0], "Video fetched successfully"));
 });
 
 const updateDetails = asyncHandler(async (req, res) => {
