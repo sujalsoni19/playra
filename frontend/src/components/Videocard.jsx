@@ -10,7 +10,7 @@ function formatDuration(seconds) {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-function formatDate(dateString) {
+export function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
     year: "numeric",

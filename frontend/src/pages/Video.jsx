@@ -3,9 +3,11 @@ import { useParams } from "react-router";
 import { getVideo } from "../api/video.api.js";
 import { getUserChannelProfile } from "../api/user.api.js";
 import { toggleSubscription } from "../api/subscriber.api.js";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { toggleVideoLike } from "../api/like.api.js";
+import { ThumbsUp } from "lucide-react";
 import { motion } from "motion/react";
 import Loader from "../components/Loader.jsx";
+import DescriptionDrawer from "../components/DescriptionDrawer.jsx";
 
 function Video() {
   const { id } = useParams();
@@ -23,6 +25,7 @@ function Video() {
         const videoData = res?.data?.data;
 
         setVideo(videoData);
+        console.log(videoData);
         setUsername(videoData?.owner?.username);
       } catch (error) {
         console.log("Error while fetching video:", error);
@@ -60,6 +63,19 @@ function Video() {
     }
   };
 
+  const handleToggleVideoLike = async () => {
+    try {
+      const res = await toggleVideoLike(id);
+      setVideo((prev) => ({
+        ...prev,
+        isLiked: !prev.isLiked,
+        likesCount: prev.isLiked ? prev.likesCount - 1 : prev.likesCount + 1,
+      }));
+    } catch (error) {
+      console.log("error in toggling like:", error);
+    }
+  };
+
   if (!video || loading) {
     return (
       <div>
@@ -70,42 +86,48 @@ function Video() {
 
   return (
     <div className="flex self-stretch w-full flex-1">
-      <div className="grid w-full grid-cols-6 gap-4 p-2">
-        <div className="col-span-4 py-1 px-3 rounded-2xl bg-gray-800">
+      <div className="sm:grid w-full grid-cols-6 gap-4 p-2">
+        <div className="sm:col-span-4 py-1 px-3 rounded-2xl bg-[#0F172A]">
           <video
             src={video.videoFile?.url}
             controls
             className="w-full rounded-2xl aspect-video"
           ></video>
-          <div className="my-2 flex flex-col gap-3 bg-green-400">
-            <h1 className="text-3xl">{video.title}</h1>
-            <div className="flex gap-5 items-center">
-              <div className="w-12 h-12 rounded-full bg-red-200">
+          <div className="my-1 mx-2 flex flex-col gap-2">
+            <h1 className="text-xl sm:text-3xl font-semibold">{video.title}</h1>
+            <div className="flex gap-2 sm:gap-5 items-center">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full">
                 <img
                   src={video.owner?.avatar?.url}
                   alt="avatar"
                   className="object-cover object-center w-full h-full rounded-full"
                 />
               </div>
-              <div className="bg-blue-500 gap-5 items-center flex flex-1">
+              <div className="gap-5 items-center flex flex-1">
                 <div className="flex flex-col">
-                  <h1 className="text-xl">{video.owner?.username}</h1>
+                  <h1 className="text-md sm:text-xl">
+                    {video.owner?.username}
+                  </h1>
                   <p className="text-gray-300 text-sm">
                     {channelinfo?.subscribersCount}{" "}
-                    <span className="ml-2">subscribers</span>
+                    <span className="ml-1">subscribers</span>
                   </p>
                 </div>
                 <motion.button
                   key={channelinfo?.isSubscribed}
                   onClick={toggleSubscribe}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{
+                    scale: 1.05,
+                    backgroundColor: "#06B6D4",
+                    cursor: "pointer",
+                  }}
                   whileTap={{ scale: 0.9 }}
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.25 }}
-                  className={`px-5 py-2 rounded-full font-semibold ${
+                  className={`px-2 sm:px-5 py-2 rounded-full text-[#0F172A] text-xs sm:text-base font-semibold ${
                     channelinfo?.isSubscribed
-                      ? "bg-cyan-400 text-white"
+                      ? "bg-[#22D3EE] text-white"
                       : "bg-white text-black"
                   }`}
                 >
@@ -113,18 +135,29 @@ function Video() {
                 </motion.button>
               </div>
               <div className="flex gap-2">
-                <button className="px-4 flex gap-2 py-2 bg-white rounded-full text-black font-semibold">
-                  <ThumbsUp />
-                  220
-                </button>
-                <button className="px-4 py-2 bg-white rounded-full text-black font-semibold">
-                  <ThumbsDown />
-                </button>
+                <motion.button
+                  key={video?.isLiked}
+                  onClick={handleToggleVideoLike}
+                  whileHover={{
+                    scale: 1.05,
+                    backgroundColor: "#1E293B",
+                    cursor: "pointer",
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.25 }}
+                  className="px-3 sm:px-4 flex gap-2 py-2 bg-[#020617] rounded-full text-white font-semibold"
+                >
+                  {video?.isLiked ? <ThumbsUp fill="#22D3EE" /> : <ThumbsUp />}
+                  {video?.likesCount}
+                </motion.button>
               </div>
             </div>
           </div>
+          <DescriptionDrawer video={video} />
         </div>
-        <div className="col-span-2 border border-cyan-300 rounded-2xl bg-pink-400">
+        <div className="sm:col-span-2 border border-cyan-300 rounded-2xl bg-pink-400">
           Sidebar
         </div>
       </div>
