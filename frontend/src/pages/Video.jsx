@@ -7,6 +7,7 @@ import { toggleVideoLike } from "../api/like.api.js";
 import { ThumbsUp } from "lucide-react";
 import { motion } from "motion/react";
 import Loader from "../components/Loader.jsx";
+import Comments from "../components/Comments.jsx";
 import DescriptionDrawer from "../components/DescriptionDrawer.jsx";
 
 function Video() {
@@ -93,7 +94,7 @@ function Video() {
             controls
             className="w-full rounded-2xl aspect-video"
           ></video>
-          <div className="my-1 mx-2 flex flex-col gap-2">
+          <div className="my-1 mx-2 flex flex-col gap-3">
             <h1 className="text-xl sm:text-3xl font-semibold">{video.title}</h1>
             <div className="flex gap-2 sm:gap-5 items-center">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full">
@@ -156,6 +157,7 @@ function Video() {
             </div>
           </div>
           <DescriptionDrawer video={video} />
+          <Comments videoId={video._id} />
         </div>
         <div className="sm:col-span-2 border border-cyan-300 rounded-2xl bg-pink-400">
           Sidebar

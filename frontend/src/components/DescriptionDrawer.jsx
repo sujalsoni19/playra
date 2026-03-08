@@ -9,7 +9,7 @@ function DescriptionDrawer({ video }) {
   return (
     <div
       onClick={() => setOpen((prev) => !prev)}
-      className={`w-full mt-4 sm:mt-0 bg-slate-700 ${open ? "" : "hover:bg-slate-600"} hover:cursor-pointer rounded-xl p-4 text-black`}
+      className={`w-full mt-4 sm:mt-8 bg-slate-700 ${open ? "" : "hover:bg-slate-600"} hover:cursor-pointer rounded-xl p-4 text-black`}
     >
       <div className="flex justify-between items-center ">
         <p className="text-sm text-slate-300 font-semibold">
