@@ -68,60 +68,73 @@ const updateComment = asyncHandler(async (req, res) => {
     .json(new Apiresponse(200, comment, "comment updated successfully"));
 });
 
-const getAllComments = asyncHandler(async(req, res) => {
+const getAllComments = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+  const { page = 1, limit = 10 } = req.query;
 
-    const { videoId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
+    throw new Apierror(400, "invalid video id");
+  }
 
-    if(!mongoose.Types.ObjectId.isValid(videoId)){
-        throw new Apierror(400, "invalid video id")
-    }
+  // will work but manual pagination
+  // const comments = await Comment.find({video: videoId}).populate("owner","username avatar")
 
-    // will work but manual pagination
-    // const comments = await Comment.find({video: videoId}).populate("owner","username avatar")
+  const pipeline = Comment.aggregate([
+    {
+      $match: {
+        video: new mongoose.Types.ObjectId(videoId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "comment",
+        as: "likedby",
+      },
+    },
+    {
+      $addFields: {
+        owner: { $first: "$owner" },
+        likeCount: { $size: "$likedby" },
+      },
+    },
+    {
+      $project: {
+        likedby: 0,
+      },
+    },
+    {
+      $sort: { createdAt: -1 },
+    },
+  ]);
 
-    const pipeline = Comment.aggregate([
-        {
-            $match: {
-                video: new mongoose.Types.ObjectId(videoId)
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "owner",
-                pipeline: [
-                    {
-                        $project: {
-                            fullName: 1,
-                            username: 1,
-                            avatar: 1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $addFields: {
-                owner: { $first: "$owner" }
-            }
-        },
-        {
-            $sort: {createdAt: -1}
-        },
-    ])
+  const result = await Comment.aggregatePaginate(pipeline, {
+    page: Number(page),
+    limit: Number(limit),
+  });
 
-    const result = await Comment.aggregatePaginate(pipeline,{
-        page: Number(page),
-        limit: Number(limit)
-    })
-
-    return res
+  return res
     .status(200)
-    .json(new Apiresponse(200, result, "all comments fetch successfully"))
-})
+    .json(new Apiresponse(200, result, "all comments fetch successfully"));
+});
 
 const deleteComment = asyncHandler(async (req, res) => {
   const { videoId, commentId } = req.params;
@@ -150,8 +163,8 @@ const deleteComment = asyncHandler(async (req, res) => {
   await comment.deleteOne();
 
   return res
-  .status(200)
-  .json(new Apiresponse(200, null, "comment deleted successfully"))
+    .status(200)
+    .json(new Apiresponse(200, null, "comment deleted successfully"));
 });
 
 export { createComment, updateComment, deleteComment, getAllComments };
