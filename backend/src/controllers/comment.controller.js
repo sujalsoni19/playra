@@ -114,6 +114,9 @@ const getAllComments = asyncHandler(async (req, res) => {
       $addFields: {
         owner: { $first: "$owner" },
         likeCount: { $size: "$likedby" },
+        isLiked: {
+          $in: [new mongoose.Types.ObjectId(req.user?._id), "$likedby.likedBy"],
+        },
       },
     },
     {
