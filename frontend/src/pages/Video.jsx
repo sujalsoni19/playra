@@ -8,7 +8,6 @@ import { ThumbsUp } from "lucide-react";
 import { motion } from "motion/react";
 import Loader from "../components/Loader.jsx";
 import Comments from "../components/Comments.jsx";
-import Commentsection from "../components/Commentsection.jsx";
 import DescriptionDrawer from "../components/DescriptionDrawer.jsx";
 
 function Video() {
@@ -158,7 +157,6 @@ function Video() {
           </div>
           <DescriptionDrawer video={video} />
           <Comments videoId={video._id} />
-          <Commentsection videoId={video._id} />
         </div>
         <div className="sm:col-span-2 border border-cyan-300 rounded-2xl bg-pink-400">
           Sidebar

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { getAllComments } from "../api/comment.api.js";
+import React, { useState } from "react";
+import { deleteComment, updateComment } from "../api/comment.api.js";
 import { toggleCommentLike } from "../api/like.api.js";
 import { ThumbsUpIcon, SquarePen, Trash2 } from "lucide-react";
 import { useUsercontext } from "../context/UserContext.jsx";
@@ -23,24 +23,11 @@ export const timeAgo = (date) => {
   return "just now";
 };
 
-function Commentsection({ videoId }) {
-  const [comments, setComments] = useState([]);
+function Commentsection({ videoId, comments, setComments }) {
   const { user } = useUsercontext();
 
-  useEffect(() => {
-    const getComments = async () => {
-      try {
-        const res = await getAllComments(videoId);
-        console.log(res?.data?.data?.docs);
-        setComments(res?.data?.data?.docs);
-        console.log(user);
-      } catch (error) {
-        console.log("error in fetching all comments: ", error);
-      }
-    };
-
-    getComments();
-  }, []);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
 
   const handleToggleCommentLike = async (commentId) => {
     try {
@@ -62,68 +49,138 @@ function Commentsection({ videoId }) {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(videoId, commentId);
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
+    } catch (error) {
+      console.log("error while deleting comment:", error);
+    }
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    try {
+      await updateComment(videoId, commentId, {
+        content: editText,
+      });
+
+      setComments((prev) =>
+        prev.map((c) =>
+          c._id === commentId
+            ? {
+                ...c,
+                content: editText,
+                updatedAt: new Date(),
+              }
+            : c,
+        ),
+      );
+
+      setEditingId(null);
+    } catch (error) {
+      console.log("error updating comment:", error);
+    }
+  };
+
+  if (!comments || comments.length === 0) {
+    return <p className="text-center">No comments yet</p>;
+  }
+
   return (
-    <div className="mt-6 bg-pink-300 py-5">
+    <div className="mt-6 py-5">
       <div className="flex flex-col gap-5">
         {comments.map((comment) => (
-          <div key={comment._id} className="flex gap-3 items-center">
+          <div key={comment._id} className="flex gap-3 items-start">
             <img
               src={comment?.owner?.avatar?.url}
               alt="avatar"
               className="w-12 h-12 rounded-full"
             />
-            <div className="flex flex-1 flex-col gap-1 bg-green-400">
-              <div className="flex gap-2 items-center">
-                <h1>@{comment?.owner?.username}</h1>
-                <p className="text-xs text-gray-300">
-                  {timeAgo(comment?.createdAt)}
-                </p>
+
+            {editingId === comment._id ? (
+              <div className="flex flex-col gap-2 flex-1">
+                <textarea
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onInput={(e) => {
+                    e.target.style.height = "auto";
+                    e.target.style.height = e.target.scrollHeight + "px";
+                  }}
+                  rows={1}
+                  className="border-b border-gray-300 outline-0 resize-none overflow-hidden"
+                />
+
+                <div className="flex self-end gap-3">
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="px-3 py-1 rounded-full hover:cursor-pointer hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={() => handleUpdateComment(comment._id)}
+                    disabled={!editText.trim()}
+                    className="px-4 py-2 rounded-3xl hover:cursor-pointer bg-cyan-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    Update
+                  </button>
+                </div>
               </div>
-              <div>
-                <p>{comment?.content}</p>
-              </div>
-              <div className="flex gap-1 items-center">
-                {" "}
-                <button
-                  onClick={() => handleToggleCommentLike(comment._id)}
-                  className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2"
-                >
-                  {comment?.isLiked ? (
-                    <ThumbsUpIcon size={20} fill="cyan" />
-                  ) : (
-                    <ThumbsUpIcon size={20} />
-                  )}
-                </button>
-                {comment.likeCount}
-              </div>
-            </div>
-            {user?._id === comment?.owner?._id && (
-              <div className=" bg-pink-400 flex p-2 gap-2">
-                <button className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2">
-                  <SquarePen size={18} />
-                </button>
-                <button className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2">
-                  <Trash2 color="red" size={18} />
-                </button>
-              </div>
+            ) : (
+              <>
+                <div className="flex flex-1 flex-col gap-1">
+                  <div className="flex gap-2 items-center">
+                    <h1>@{comment?.owner?.username}</h1>
+
+                    <p className="text-xs text-gray-400">
+                      {timeAgo(comment.createdAt)}
+                      {comment.updatedAt !== comment.createdAt && (
+                        <span className="ml-1">(edited)</span>
+                      )}
+                    </p>
+                  </div>
+
+                  <p>{comment?.content}</p>
+
+                  <div className="flex gap-1 items-center">
+                    <button
+                      onClick={() => handleToggleCommentLike(comment._id)}
+                      className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2"
+                    >
+                      {comment?.isLiked ? (
+                        <ThumbsUpIcon size={20} fill="cyan" />
+                      ) : (
+                        <ThumbsUpIcon size={20} />
+                      )}
+                    </button>
+
+                    {comment.likeCount}
+                  </div>
+                </div>
+                {user?._id === comment?.owner?._id && (
+                  <div className="flex p-2 sm:gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingId(comment._id);
+                        setEditText(comment.content);
+                      }}
+                      className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2"
+                    >
+                      <SquarePen size={18} />
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="hover:bg-gray-700 hover:cursor-pointer hover:rounded-full p-2"
+                    >
+                      <Trash2 color="red" size={18} />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
-
-          //  <div key={comment._id} className='flex gap-5 items-center'>
-          //     <img
-          //     src={comment?.owner?.avatar?.url}
-          //     alt="avatar"
-          //     className="w-12 h-12 bg-red-500 rounded-full"
-          //   />
-          //   <div className='flex flex-col gap-1 bg-green-400'>
-          //     <div className='flex gap-1'>
-          //         <h1>@{comment?.owner?.username}</h1>
-          //         <p className='text-sm text-gray-300'>{comment.createdAt}</p>
-          //     </div>
-          //     <div><p>{comment.content}</p></div>
-          //     <div> </div>
-          //   </div>
-          // </div>
         ))}
       </div>
     </div>
