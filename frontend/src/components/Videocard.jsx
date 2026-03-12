@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 function formatDuration(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
@@ -19,59 +18,89 @@ export function formatDate(dateString) {
   });
 }
 
-function Videocard({ video }) {
-  return (
-    <div>
+function Videocard({ video, variant = "feed" }) {
+  if (variant === "sidebar") {
+    return (
       <Link to={`/video/${video._id}`}>
-        <motion.div
-          initial={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "transparent",
-          }}
-          whileHover={{
-            cursor: "pointer",
-            backgroundColor: "rgb(79 79 79 / 60%)",
-          }}
-          transition={{ duration: 0.3 }}
-          onClick={{}}
-          className="w-80 md:w-85 lg:w-90 flex flex-col items-center gap-1 rounded-2xl p-2"
-        >
-          <div className="relative">
+        <div className="flex gap-3 rounded-xl p-2 hover:bg-gray-700/40 cursor-pointer transition-colors duration-200">
+          <div className="relative shrink-0">
             <img
               src={video.thumbnail?.url}
               alt="thumbnail"
-              className="w-82.5 aspect-video rounded-2xl object-cover"
+              className="w-40 aspect-video bg-green-300 rounded-lg object-cover"
             />
-            <p className="bg-gray-950 p-1 text-xs absolute right-4 bottom-3">
+            <p className="bg-gray-950 p-1 text-xs absolute right-2 bottom-2">
               {formatDuration(video.duration)}
             </p>
           </div>
-          <div className="flex w-full p-2 gap-2 ">
-            <div className="w-10 h-10 shrink-0">
-              <img
-                src={video.owner?.avatar?.url}
-                alt="avatar"
-                className="object-cover object-center w-full h-full rounded-full"
-              />
-            </div>
-            <div>
-              <h1 className="font-bold text-base line-clamp-2 ">
-                {video.title}
-              </h1>
-              <p className="text-sm line-clamp-1">{video.owner.username}</p>
-              <div className="flex items-center text-gray-300">
-                <p className="text-xs">{video.views} views</p>
-                <p>
-                  <Dot />
-                </p>
-                <p className="text-xs">{formatDate(video.createdAt)}</p>
-              </div>
+
+          <div className="flex flex-col gap-1">
+            <h1 className="font-semibold text-sm line-clamp-2">
+              {video.title}
+            </h1>
+
+            <p className="text-xs text-gray-300">{video.owner.username}</p>
+
+            <div className="flex lg:flex-col xl:flex-row items-center text-gray-400 text-xs">
+              <p>{video.views} views</p>
+              <Dot size={16} />
+              <p>{formatDate(video.createdAt)}</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </Link>
-    </div>
+    );
+  }
+
+  return (
+    <Link to={`/video/${video._id}`}>
+      <motion.div
+        initial={{
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: "transparent",
+        }}
+        whileHover={{
+          cursor: "pointer",
+          backgroundColor: "rgb(79 79 79 / 60%)",
+        }}
+        transition={{ duration: 0.3 }}
+        className="w-80 md:w-85 lg:w-90 flex flex-col items-center gap-1 rounded-2xl p-2"
+      >
+        <div className="relative">
+          <img
+            src={video.thumbnail?.url}
+            alt="thumbnail"
+            className="w-82.5 aspect-video rounded-2xl object-cover"
+          />
+          <p className="bg-gray-950 p-1 text-xs absolute right-4 bottom-3">
+            {formatDuration(video.duration)}
+          </p>
+        </div>
+
+        <div className="flex w-full p-2 gap-2">
+          <div className="w-10 h-10 shrink-0">
+            <img
+              src={video.owner?.avatar?.url}
+              alt="avatar"
+              className="object-cover object-center w-full h-full rounded-full"
+            />
+          </div>
+
+          <div>
+            <h1 className="font-bold text-base line-clamp-2">{video.title}</h1>
+
+            <p className="text-sm line-clamp-1">{video.owner.username}</p>
+
+            <div className="flex items-center text-gray-300">
+              <p className="text-xs">{video.views} views</p>
+              <Dot />
+              <p className="text-xs">{formatDate(video.createdAt)}</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </Link>
   );
 }
 

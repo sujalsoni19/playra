@@ -8,6 +8,7 @@ import { ThumbsUp } from "lucide-react";
 import { motion } from "motion/react";
 import Loader from "../components/Loader.jsx";
 import Comments from "../components/Comments.jsx";
+import SidebarVideoFeed from "../components/SidebarVideoFeed.jsx";
 import DescriptionDrawer from "../components/DescriptionDrawer.jsx";
 
 function Video() {
@@ -86,8 +87,8 @@ function Video() {
 
   return (
     <div className="flex self-stretch w-full flex-1">
-      <div className="sm:grid w-full grid-cols-6 gap-4 p-2">
-        <div className="sm:col-span-4 py-1 px-3 rounded-2xl bg-[#0F172A]">
+      <div className="sm:grid  w-full grid-cols-6 gap-8 lg:gap-4 p-2">
+        <div className="col-span-6 lg:col-span-4 py-1 pb-4 px-3 h-fit self-start rounded-2xl bg-[#0F172A]">
           <video
             src={video.videoFile?.url}
             controls
@@ -108,7 +109,7 @@ function Video() {
                   <h1 className="text-md sm:text-xl">
                     {video.owner?.username}
                   </h1>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-gray-300 flex text-sm">
                     {channelinfo?.subscribersCount}{" "}
                     <span className="ml-1">subscribers</span>
                   </p>
@@ -158,8 +159,8 @@ function Video() {
           <DescriptionDrawer video={video} />
           <Comments videoId={video._id} />
         </div>
-        <div className="sm:col-span-2 border border-cyan-300 rounded-2xl bg-pink-400">
-          Sidebar
+        <div className="col-span-6 overflow-y-auto lg:col-span-2 bg-[#030918] rounded-2xl h-fit self-start">
+          <SidebarVideoFeed videoId={video._id} />
         </div>
       </div>
     </div>

@@ -90,7 +90,7 @@ function Commentsection({ videoId, comments, setComments }) {
     <div className="mt-6 py-5">
       <div className="flex flex-col gap-5">
         {comments.map((comment) => (
-          <div key={comment._id} className="flex gap-3 items-start">
+          <div key={comment._id} className="flex gap-1 sm:gap-3 items-start">
             <img
               src={comment?.owner?.avatar?.url}
               alt="avatar"
@@ -130,10 +130,10 @@ function Commentsection({ videoId, comments, setComments }) {
             ) : (
               <>
                 <div className="flex flex-1 flex-col gap-1">
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-1 sm:gap-2 items-center">
                     <h1>@{comment?.owner?.username}</h1>
 
-                    <p className="text-xs text-gray-400">
+                    <p className="text-[10px] sm:text-xs text-gray-400">
                       {timeAgo(comment.createdAt)}
                       {comment.updatedAt !== comment.createdAt && (
                         <span className="ml-1">(edited)</span>
@@ -159,7 +159,7 @@ function Commentsection({ videoId, comments, setComments }) {
                   </div>
                 </div>
                 {user?._id === comment?.owner?._id && (
-                  <div className="flex p-2 sm:gap-2">
+                  <div className="flex sm:p-2 sm:gap-2">
                     <button
                       onClick={() => {
                         setEditingId(comment._id);
