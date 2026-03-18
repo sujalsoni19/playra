@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "../components/Sidebar.jsx";
+import { Outlet } from "react-router-dom";
 import Feed from "../components/Feed.jsx";
 
 function Home() {
@@ -10,7 +11,7 @@ function Home() {
       </div>
 
       <div className="border p-2 rounded-xl border-cyan-400 w-full lg:w-5/6">
-        <Feed />
+        <Outlet />
       </div>
     </div>
   );

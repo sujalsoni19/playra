@@ -1,8 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { Login, Register, Home, PostVideo, Video } from "./pages/index.js";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  Login,
+  Register,
+  Home,
+  PostVideo,
+  Video,
+  ChannelPage,
+} from "./pages/index.js";
+import Feed from "./components/Feed.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
 import Hero from "./components/Hero.jsx";
@@ -11,32 +19,32 @@ import PublicRoute from "./components/PublicRoute.jsx";
 
 const router = createBrowserRouter([
   {
-    element: <App />,
     path: "/",
+    element: <App />,
     children: [
       {
+        index: true,
         element: (
           <PublicRoute>
             <Hero />
           </PublicRoute>
         ),
-        path: "/",
       },
       {
+        path: "register",
         element: (
           <PublicRoute>
             <Register />
           </PublicRoute>
         ),
-        path: "/register",
       },
       {
+        path: "login",
         element: (
           <PublicRoute>
             <Login />
           </PublicRoute>
         ),
-        path: "/login",
       },
       {
         element: (
@@ -44,24 +52,33 @@ const router = createBrowserRouter([
             <Home />
           </ProtectedRoute>
         ),
-        path: "/home",
+        children: [
+          {
+            path: "/home",
+            element: <Feed />,
+          },
+          {
+            path: "/channel/:id",
+            element: <ChannelPage />,
+          },
+        ],
       },
       {
+        path: "post-video",
         element: (
           <ProtectedRoute>
             <PostVideo />
           </ProtectedRoute>
         ),
-        path: "/post-video",
       },
       {
-        element:(
-          <ProtectedRoute >
+        path: "video/:id",
+        element: (
+          <ProtectedRoute>
             <Video />
           </ProtectedRoute>
         ),
-        path: "/video/:id"
-      }
+      },
     ],
   },
 ]);

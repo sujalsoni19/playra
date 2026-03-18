@@ -34,7 +34,7 @@ function SubscribedchannelsList() {
           return (
             <NavLink
               key={item.channel?._id}
-              to={`/@${item.channel?.username}`}
+              to={`channel/${item.channel?.username}`}
               className={navLinkClass}
             >
               <div className="bg-red-600 w-8 h-8 rounded-full">
