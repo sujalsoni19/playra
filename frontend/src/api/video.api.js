@@ -6,3 +6,6 @@ export const getAllVideos = (params) =>
   api.get("/api/v1/videos/all-videos", { params });
 
 export const getVideo = (id) => api.get(`/api/v1/videos/video/${id}`);
+
+export const getAllVideosbyUser = (userId) => 
+  api.get(`/api/v1/videos/video/user/${userId}`);
