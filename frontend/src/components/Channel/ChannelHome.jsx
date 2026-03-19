@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router";
 import Videocard from "../Videocard.jsx";
 
 function ChannelHome() {
-  const { videos, channel } = useOutletContext();
+  const { videos } = useOutletContext();
 
   const popularVideos = videos
     ? [...videos].sort((a, b) => b.views - a.views).slice(0, 3)
@@ -11,7 +11,7 @@ function ChannelHome() {
 
   return videos.length == 0 ? (
     <div className="h-full py-10 flex justify-center items-center">
-      <h1 className="text-2xl">No videos available</h1>
+      <h1 className="text-base sm:text-2xl text-center">This channel hasn’t uploaded any videos yet</h1>
     </div>
   ) : (
     <div className="p-2 flex flex-col gap-3">

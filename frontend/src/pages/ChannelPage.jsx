@@ -34,7 +34,6 @@ function ChannelPage() {
     const fetchAllVideosbyUser = async () => {
       try {
         const res = await getAllVideosbyUser(channel?._id);
-        console.log("videos of user: ", res?.data?.data);
         setVideos(res?.data?.data);
       } catch (error) {
         console.log("error in fetching all videos of user: ", error);

@@ -14,3 +14,6 @@ export const getCurrentUser = () =>
 
 export const getUserChannelProfile = (username) =>
   api.get(`/api/v1/users/c/${username}`);
+
+export const getChannelStats = (channelId) =>
+  api.get(`/api/v1/users/c/${channelId}/stats`);
