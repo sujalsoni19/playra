@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Apierror } from "../utils/Apierror.js";
 import { Apiresponse } from "../utils/Apiresponse.js";
 import { User } from "../models/user.model.js";
+import { Video } from "../models/video.model.js";
+import { Subscription } from "../models/subscription.model.js";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import {
@@ -479,6 +481,82 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     );
 });
 
+const getChannelStats = asyncHandler(async (req, res) => {
+  const { channelId } = req.params;
+
+  if (!channelId) {
+    throw new Apierror(400, "Channel ID is required");
+  }
+
+  const channelObjectId = new mongoose.Types.ObjectId(channelId);
+
+  const totalViews = await Video.aggregate([
+    {
+      $match: { owner: channelObjectId },
+    },
+    {
+      $group: {
+        _id: null,
+        totalViews: { $sum: "$views" },
+      },
+    },
+  ]);
+
+  const totalSubscribers = await Subscription.aggregate([
+    {
+      $match: { channel: channelObjectId },
+    },
+    {
+      $count: "totalSubscribers",
+    },
+  ]);
+
+  const totalVideos = await Video.aggregate([
+    {
+      $match: { owner: channelObjectId },
+    },
+    {
+      $count: "totalVideos",
+    },
+  ]);
+
+  const totalLikes = await Video.aggregate([
+    {
+      $match: { owner: channelObjectId },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "video",
+        as: "likes",
+      },
+    },
+    {
+      $addFields: {
+        likeCount: { $size: "$likes" },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalLikes: { $sum: "$likeCount" },
+      },
+    },
+  ]);
+
+  const stats = {
+    viewCount: totalViews[0]?.totalViews || 0,
+    subscriberCount: totalSubscribers[0]?.totalSubscribers || 0,
+    likeCount: totalLikes[0]?.totalLikes || 0,
+    videoCount: totalVideos[0]?.totalVideos || 0,
+  };
+
+  return res
+    .status(200)
+    .json(new Apiresponse(200, stats, "channel stats fetched successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -491,4 +569,5 @@ export {
   updateUsercoverimg,
   getUserChannelProfile,
   getWatchHistory,
+  getChannelStats
 };
