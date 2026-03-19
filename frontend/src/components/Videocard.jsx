@@ -52,6 +52,49 @@ function Videocard({ video, variant = "feed" }) {
     );
   }
 
+  if (variant === "channel") {
+    return (
+      <Link to={`/video/${video._id}`}>
+        <motion.div
+          initial={{
+            borderWidth: "1px",
+            borderStyle: "solid",
+            borderColor: "transparent",
+          }}
+          whileHover={{
+            cursor: "pointer",
+            backgroundColor: "rgb(79 79 79 / 60%)",
+          }}
+          transition={{ duration: 0.3 }}
+          className="w-75 md:w-80 lg:w-85 flex flex-col gap-1 rounded-2xl p-2"
+        >
+          {/* Thumbnail */}
+          <div className="relative">
+            <img
+              src={video.thumbnail?.url}
+              alt="thumbnail"
+              className="w-82.5 aspect-video rounded-2xl object-cover"
+            />
+            <p className="bg-gray-950 p-1 text-xs absolute right-4 bottom-3">
+              {formatDuration(video.duration)}
+            </p>
+          </div>
+
+          {/* Info */}
+          <div className="w-full p-2">
+            <h1 className="font-bold text-base line-clamp-2">{video.title}</h1>
+
+            <div className="flex items-center text-gray-300 mt-1">
+              <p className="text-xs">{video.views} views</p>
+              <Dot />
+              <p className="text-xs">{formatDate(video.createdAt)}</p>
+            </div>
+          </div>
+        </motion.div>
+      </Link>
+    );
+  }
+
   return (
     <Link to={`/video/${video._id}`}>
       <motion.div

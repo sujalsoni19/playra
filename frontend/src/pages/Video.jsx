@@ -92,6 +92,7 @@ function Video() {
           <video
             src={video.videoFile?.url}
             controls
+            autoPlay
             className="w-full rounded-2xl aspect-video"
           ></video>
           <div className="my-1 mx-2 flex flex-col gap-3">

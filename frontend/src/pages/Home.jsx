@@ -10,7 +10,7 @@ function Home() {
         <Sidebar />
       </div>
 
-      <div className="border p-2 rounded-xl border-cyan-400 w-full lg:w-5/6">
+      <div className="border p-2 rounded-xl custom-scrollbar overflow-y-auto border-cyan-400 w-full lg:w-5/6">
         <Outlet />
       </div>
     </div>
