@@ -10,6 +10,13 @@ import {
   Video,
   ChannelPage,
 } from "./pages/index.js";
+import {
+  ChannelAbout,
+  ChannelHome,
+  ChannelPlaylists,
+  ChannelPosts,
+  ChannelVideos,
+} from "./components/Channel/Channelindex.js";
 import Feed from "./components/Feed.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
@@ -54,12 +61,34 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "/home",
+            path: "home", // ✅ relative
             element: <Feed />,
           },
           {
-            path: "/channel/:id",
+            path: "channel/:id", // ✅ relative
             element: <ChannelPage />,
+            children: [
+              {
+                index: true, // ✅ default route
+                element: <ChannelHome />,
+              },
+              {
+                path: "videos",
+                element: <ChannelVideos />,
+              },
+              {
+                path: "playlists",
+                element: <ChannelPlaylists />,
+              },
+              {
+                path: "posts",
+                element: <ChannelPosts />,
+              },
+              {
+                path: "about",
+                element: <ChannelAbout />,
+              },
+            ],
           },
         ],
       },
