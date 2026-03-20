@@ -429,24 +429,47 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).select("watchHistory");
-
-  if (!user) {
-    throw new Apierror(404, "User not found");
-  }
-
-  const videos = await Video.find({
-    _id: { $in: user.watchHistory },
-  })
-    .populate("owner", "fullName username avatar")
-    .lean();
-
-  // preserve order
-  const orderedVideos = user.watchHistory
-    .map((id) =>
-      videos.find((video) => video._id.toString() === id.toString())
-    )
-    .filter(Boolean);
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    fullName: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
   return res.status(200).json(
     new Apiresponse(
