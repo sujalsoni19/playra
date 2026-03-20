@@ -412,6 +412,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         avatar: 1,
         coverImage: 1,
         email: 1,
+        createdAt: 1,
       },
     },
   ]);
@@ -428,57 +429,32 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-  const user = await User.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(req.user._id),
-      },
-    },
-    {
-      $lookup: {
-        from: "videos",
-        localField: "watchHistory",
-        foreignField: "_id",
-        as: "watchHistory",
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "owner",
-              foreignField: "_id",
-              as: "owner",
-              pipeline: [
-                {
-                  $project: {
-                    fullName: 1,
-                    username: 1,
-                    avatar: 1,
-                  },
-                },
-              ],
-            },
-          },
-          {
-            $addFields: {
-              owner: {
-                $first: "$owner",
-              },
-            },
-          },
-        ],
-      },
-    },
-  ]);
+  const user = await User.findById(req.user._id).select("watchHistory");
 
-  return res
-    .status(200)
-    .json(
-      new Apiresponse(
-        200,
-        user[0]?.watchHistory || [],
-        "Watch History fetched successfully"
-      )
-    );
+  if (!user) {
+    throw new Apierror(404, "User not found");
+  }
+
+  const videos = await Video.find({
+    _id: { $in: user.watchHistory },
+  })
+    .populate("owner", "fullName username avatar")
+    .lean();
+
+  // preserve order
+  const orderedVideos = user.watchHistory
+    .map((id) =>
+      videos.find((video) => video._id.toString() === id.toString())
+    )
+    .filter(Boolean);
+
+  return res.status(200).json(
+    new Apiresponse(
+      200,
+      orderedVideos,
+      "Watch History fetched successfully"
+    )
+  );
 });
 
 const getChannelStats = asyncHandler(async (req, res) => {
