@@ -6,5 +6,6 @@ import PostVideo from "./PostVideo.jsx";
 import Video from "./Video.jsx";
 import ChannelPage from "./ChannelPage.jsx";
 import Subscriptions from "./Subscriptions.jsx";
+import WatchHistory from "./WatchHistory.jsx";
 
-export { Login, Register, Home, PostVideo, Video, ChannelPage, Subscriptions };
+export { Login, Register, Home, PostVideo, Video, ChannelPage, Subscriptions, WatchHistory };

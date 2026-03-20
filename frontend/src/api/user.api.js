@@ -17,3 +17,6 @@ export const getUserChannelProfile = (username) =>
 
 export const getChannelStats = (channelId) =>
   api.get(`/api/v1/users/c/${channelId}/stats`);
+
+export const getWatchHistory = () =>
+  api.get("/api/v1/users/history");

@@ -10,6 +10,7 @@ import {
   Video,
   ChannelPage,
   Subscriptions,
+  WatchHistory,
 } from "./pages/index.js";
 import {
   ChannelAbout,
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
           {
             path: "subscriptions",
             element: <Subscriptions />,
+          },
+          {
+            path: "watch-history",
+            element: <WatchHistory />,
           },
           {
             path: "channel/:id",
