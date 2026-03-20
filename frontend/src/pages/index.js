@@ -5,5 +5,6 @@ import Home from "./Home.jsx";
 import PostVideo from "./PostVideo.jsx";
 import Video from "./Video.jsx";
 import ChannelPage from "./ChannelPage.jsx";
+import Subscriptions from "./Subscriptions.jsx";
 
-export { Login, Register, Home, PostVideo, Video, ChannelPage }
+export { Login, Register, Home, PostVideo, Video, ChannelPage, Subscriptions };

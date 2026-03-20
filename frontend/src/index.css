@@ -1,11 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Manrope:wght@200..800&family=Nova+Round&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Manrope:wght@200..800&family=Nova+Round&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 
 @import "tailwindcss";
 
-:root{
-    font-family: "Manrope", sans-serif;
+/* Prevent layout shift */
+html {
+  scrollbar-gutter: stable;
 }
 
+:root {
+  font-family: "Manrope", sans-serif;
+}
+
+/* ---------------- HERO ---------------- */
 @layer utilities {
   .bg-hero {
     background:
@@ -29,10 +35,16 @@
 
   @keyframes heroFloat {
     0% {
-      background-position: 0% 0%, 100% 100%, 50% 100%;
+      background-position:
+        0% 0%,
+        100% 100%,
+        50% 100%;
     }
     100% {
-      background-position: 100% 50%, 0% 50%, 50% 0%;
+      background-position:
+        100% 50%,
+        0% 50%,
+        50% 0%;
     }
   }
 
@@ -41,22 +53,15 @@
   }
 }
 
+/* ---------------- SCROLLBAR FIX ---------------- */
 @layer utilities {
   .custom-scrollbar {
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: thin; /* ✅ fixed (was none) */
     scrollbar-color: rgba(34, 211, 238, 0.6) transparent;
   }
 
+  /* ✅ keep width constant (NO layout shift) */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 0px;
-  }
-
-  .custom-scrollbar:hover {
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: rgba(34, 211, 238, 0.6) transparent;
-  }
-
-  .custom-scrollbar:hover::-webkit-scrollbar {
     width: 8px;
   }
 
@@ -64,9 +69,19 @@
     background: transparent;
   }
 
+  /* ✅ hidden by default (NOT width: 0) */
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(34, 211, 238, 0.6);
+    background-color: transparent;
     border-radius: 999px;
+    box-shadow: none;
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  /* ✅ visible on hover */
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(34, 211, 238, 0.6);
     box-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
   }
 
@@ -75,5 +90,3 @@
     box-shadow: 0 0 12px rgba(34, 211, 238, 0.95);
   }
 }
-
-

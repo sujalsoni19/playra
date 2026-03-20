@@ -34,7 +34,7 @@ function Feed() {
       <h1 className="text-3xl">No videos available</h1>
     </div>
   ) : (
-    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center lg:grid-cols-3 my-2 custom-scrollbar overflow-y-auto h-full w-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center lg:grid-cols-3  custom-scrollbar overflow-y-auto h-full w-full">
       {allVideos.map((video) => (
         <Videocard key={video._id} video={video} />
       ))}

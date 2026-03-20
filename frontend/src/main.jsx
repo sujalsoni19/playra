@@ -9,6 +9,7 @@ import {
   PostVideo,
   Video,
   ChannelPage,
+  Subscriptions,
 } from "./pages/index.js";
 import {
   ChannelAbout,
@@ -61,15 +62,19 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "home", // ✅ relative
+            path: "home",
             element: <Feed />,
           },
           {
-            path: "channel/:id", // ✅ relative
+            path: "subscriptions",
+            element: <Subscriptions />,
+          },
+          {
+            path: "channel/:id",
             element: <ChannelPage />,
             children: [
               {
-                index: true, // ✅ default route
+                index: true, // default
                 element: <ChannelHome />,
               },
               {
